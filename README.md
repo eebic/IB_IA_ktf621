@@ -89,3 +89,5 @@ Inheritance: Reduces redundancy, since all sequences share common behaviors.
 Polymorphism: The analyze() method works differently depending on whether it's DNA, RNA, or protein.
 
 Modularity: You can extend it in the future (e.g., add mutation analysis without affecting existing code).
+
+INCLUDE MUTATIONS???
