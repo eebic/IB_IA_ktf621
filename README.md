@@ -9,29 +9,7 @@ Candidate Code: ktf621
 
 ## Logic Flow Diagram
 
-The diagram will follow this logical sequence:
-
-Start
-
-User Input: DNA or RNA sequence
-
-If DNA, transcribe to RNA
-
-If RNA, proceed to translation
-
-Translate RNA to Protein Sequence
-
-Analyze Protein Sequence
-
-Predict secondary structures
-
-Identify motifs and properties
-
-Output Results
-
-End
-
-## Mockup
+![](https://gyazo.com/eb5c5741b6a9a16c692170a41a49c858.png | width=100)
 
 notes: main.java, transcription.java, translation.java, ProteinAnalysis.java
 
