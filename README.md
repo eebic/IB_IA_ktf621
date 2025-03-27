@@ -9,7 +9,7 @@ Candidate Code: ktf621
 
 ## Logic Flow Diagram
 
-![](https://github.com/eebic/InternalAssessment/blob/main/img/IA_Logic_Flow_Diagram.png?raw=true | width=100)
+<img src="https://github.com/eebic/InternalAssessment/blob/main/img/IA_Logic_Flow_Diagram.png?raw=true" width="600" />
 
 notes: main.java, transcription.java, translation.java, ProteinAnalysis.java
 
