@@ -15,7 +15,8 @@ Candidate Code: ktf621
 
 <img src="https://github.com/eebic/InternalAssessment/blob/main/img/IA_Mockup.png?raw=true" width="900" />
 
-**NOTES:**
+### **NOTES:**
+
 -> When the user enters a DNA or RNA sequence, the program creates an object of either DNASequence or RNASequence.
 
   - If the user inputs DNA, a DNASequence object is created.
