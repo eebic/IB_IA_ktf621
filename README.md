@@ -7,7 +7,7 @@ Candidate Code: ktf621
 
 **Purpose:** The purpose of this program is to make the analysis of RNA, DNA, and protein structures faster and more accurate, as current methods—especially those used in high school and middle school classes—are time-consuming, energy-intensive, and prone to human error.
 
-<ins>Logic Flow Diagram<ins>
+##<ins>Logic Flow Diagram<ins>
 
 The diagram will follow this logical sequence:
 
