@@ -15,62 +15,35 @@ Candidate Code: ktf621
 
 <img src="https://github.com/eebic/InternalAssessment/blob/main/img/IA_Mockup.png?raw=true" width="900" />
 
+**NOTES:**
+-> When the user enters a DNA or RNA sequence, the program creates an object of either DNASequence or RNASequence.
 
-notes: main.java, transcription.java, translation.java, ProteinAnalysis.java
+  - If the user inputs DNA, a DNASequence object is created.
+    
+  - If the user inputs RNA, an RNASequence object is created.
 
+-> If a DNASequence object is created, it can be transcribed into an RNASequence object using the transcribe() method.
 
-1. User Input & Object Creation
-When the user enters a DNA or RNA sequence, the program creates an object of either DNASequence or RNASequence.
+-> Once the RNASequence object is obtained, it can be translated into a ProteinSequence object using the translate() method.
 
-If the user inputs DNA, a DNASequence object is created.
-
-If the user inputs RNA, an RNASequence object is created.
-
-2. Processing & Hierarchical Flow
-If a DNASequence object is created, it can be transcribed into an RNASequence object using the transcribe() method.
-
-Once the RNASequence object is obtained, it can be translated into a ProteinSequence object using the translate() method.
-
-3. Analysis Using OOP
-Each sequence type (DNASequence, RNASequence, ProteinSequence) inherits from a common abstract class BiologicalSequence, which means they share common attributes (like sequence) but have their own specific behaviors.
+Each sequence type (DNASequence, RNASequence, ProteinSequence) inherits from a common abstract class *idk name yet lol*
 
 The analyze() method is defined in the parent class but is overridden in each subclass, meaning:
 
-A DNA sequence might be analyzed for GC content.
+- A DNA sequence might be analyzed for GC content.
+- An RNA sequence might be analyzed for codon frequency.
+- A protein sequence can be analyzed for motifs and secondary structures.
 
-An RNA sequence might be analyzed for codon frequency.
+**Example:**
+-> User inputs: "ATGCGT" (DNA sequence)
 
-A protein sequence might be analyzed for motifs and secondary structures.
+-> DNASequence object is created.
 
-4. Additional Functionality with Interfaces
-A ProteinAnalyzer class implements the SequenceAnalyzer interface, which contains methods like:
+-> DNA is transcribed to RNA, creating an RNASequence object.
 
-predictSecondaryStructure()
+-> RNA is translated to a protein, creating a ProteinSequence object.
 
-identifyMotifs()
+-> A ProteinAnalyzer object is created to analyze the protein sequence.
 
-This allows separation of concerns, keeping analysis separate from sequence conversion.
+-> The program outputs predicted secondary structures and motifs of the protein + the actual protein sequence.
 
-5. Example User Flow
-User inputs: "ATGCGT" (a DNA sequence).
-
-DNASequence object is created.
-
-DNA is transcribed to RNA, creating an RNASequence object.
-
-RNA is translated to a protein, creating a ProteinSequence object.
-
-A ProteinAnalyzer object is created to analyze the protein.
-
-The program outputs predicted secondary structures and motifs of the protein.
-
-Why This OOP Structure is Good
-Encapsulation: Keeps data private and only accessible through methods.
-
-Inheritance: Reduces redundancy, since all sequences share common behaviors.
-
-Polymorphism: The analyze() method works differently depending on whether it's DNA, RNA, or protein.
-
-Modularity: You can extend it in the future (e.g., add mutation analysis without affecting existing code).
-
-INCLUDE MUTATIONS???
