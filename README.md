@@ -36,6 +36,7 @@ The analyze() method is defined in the parent class but is overridden in each su
 - A protein sequence can be analyzed for motifs and secondary structures.
 
 **Example:**
+
 -> User inputs: "ATGCGT" (DNA sequence)
 
 -> DNASequence object is created.
