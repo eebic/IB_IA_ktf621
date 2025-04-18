@@ -14,7 +14,7 @@ class Protein {
   ArrayList<String> analyzeFeatures() {
     ArrayList<String> features = new ArrayList<String>();
 
-    // 1. Basic motifs
+    // Basic motifs
     if (sequence.contains("Met")) features.add("Start codon detected");
     if (sequence.contains("Pro")) features.add("Helix breaker (Proline loop)");
     if (sequence.contains("Gly")) features.add("Flexible region (Glycine)");
@@ -25,7 +25,7 @@ class Protein {
     if (sequence.contains("Trp")) features.add("Aromatic residue (Tryptophan)");
     if (sequence.contains("Tyr")) features.add("Aromatic residue (Tyrosine)");
 
-    // 2. Position-based detection
+    // Position-based detection
     if (aminoAcids.length >= 3) {
       String start = aminoAcids[0];
       String mid = aminoAcids[aminoAcids.length / 2];
@@ -35,7 +35,7 @@ class Protein {
       features.add("End residue: " + end);
     }
 
-    // 3. Amino acid frequency
+    // Amino acid frequency
     HashMap<String, Integer> freq = new HashMap<String, Integer>();
     for (String aa : aminoAcids) {
       freq.put(aa, freq.getOrDefault(aa, 0) + 1);
@@ -46,7 +46,7 @@ class Protein {
       features.add(aa + ": " + freq.get(aa));
     }
 
-    // 4. Simple folding prediction
+    // Simple folding prediction
     int helixCount = 0, sheetCount = 0, loopCount = 0;
     for (String aa : aminoAcids) {
       if (aa.equals("Leu") || aa.equals("Ala") || aa.equals("Glu")) helixCount++;
