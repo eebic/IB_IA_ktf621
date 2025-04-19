@@ -18,6 +18,8 @@ void drawStrandSelectionScreen() {
   text("Character limit: 300 bases", 125, 165);
 }
 
+
+
 void drawInputScreen() {
   if (showMutationPage) {
     drawMutationScreen();
@@ -54,7 +56,7 @@ void drawInputScreen() {
   textAlign(LEFT, CENTER);
   text(inputStrand + (showCursor && inputBoxSelected ? "|" : ""), 25, 110);
 
-  // Example
+  // Example strands
   fill(100);
   textSize(12);
   if (isDNASelected) text("Example: " + groupBases("ATGGGTGCTCTGCTGCTGCCTTTGGGCCCTGGTGCGGACTGA"), 25, 145);
@@ -66,7 +68,7 @@ void drawInputScreen() {
   drawButton(610, 160, 80, 35, "Enter", isMouseOver(610, 160, 80, 35));
   drawButton(700, 160, 80, 35, "Clear", isMouseOver(700, 160, 80, 35));
 
-  // Blinking cursor logic
+  // Blinking cursor
   blinkCounter++;
   if (blinkCounter % 30 == 0) showCursor = !showCursor;
 
@@ -86,8 +88,8 @@ void drawInputScreen() {
   text("Protein Features:", 20, y);
   y += 20;
 
-  // Feature display with wider column spacing
-  int colWidth = 400;  // ✅ Increased spacing
+  // Feature display
+  int colWidth = 400;  
   int colX = 25;
   int lineH = 20;
   int row = 0;
@@ -100,11 +102,13 @@ void drawInputScreen() {
     }
   }
 
-  // Show Apply Mutation button only for DNA or RNA
+  // Apply Mutation button (only for DNA or RNA pages)
   if (!isProteinSelected) {
     drawButton(20, height - 50, 180, 35, "Apply Mutation", isMouseOver(20, height - 50, 180, 35));
   }
 }
+
+
 
 void mousePressed() {
   if (!hasChosenStrandType) {
@@ -117,10 +121,28 @@ void mousePressed() {
     }
   } else if (!showMutationPage) {
     if (isMouseOver(20, 20, 180, 40)) {
-      isDNASelected = false; isRNASelected = false; isProteinSelected = false;
+      // Reset home navigation
       hasChosenStrandType = false;
-      inputStrand = ""; rnaOutput = ""; proteinOutput = ""; features.clear();
-      return;
+      isDNASelected = false;
+      isRNASelected = false;
+      isProteinSelected = false;
+    
+      // Clear strand data
+      inputStrand = "";
+      rnaOutput = "";
+      proteinOutput = "";
+      features.clear();
+    
+      // Reset mutation screen
+      showMutationPage = false;
+      originalStrand = "";
+      oldProteinOutput = "";
+      mutationPositionInput = "";
+      mutationValue = "";
+      positionBoxSelected = false;
+      valueBoxSelected = false;
+      selectedMutationIndex = -1;
+      mutationType = "Point";  // default mutation type
     }
 
     if (isMouseOver(25, 125, 700, 20)) {
@@ -146,6 +168,16 @@ void mousePressed() {
       if (isMouseOver(x, 60, 120, 30)) {
         selectedMutationIndex = i;
         mutationType = mutationOptions[i];
+    
+        // Reset to original unmutated strand
+        inputStrand = originalStrand;
+        processSequence();
+    
+        // Clear mutation inputs
+        mutationPositionInput = "";
+        mutationValue = "";
+        positionBoxSelected = false;
+        valueBoxSelected = false;
       }
     }
 
@@ -158,9 +190,21 @@ void mousePressed() {
 
     if (isMouseOver(160, 150, 120, 30)) {
       showMutationPage = false;
+    
+      // Reset mutation input
+      mutationPositionInput = "";
+      mutationValue = "";
+      positionBoxSelected = false;
+      valueBoxSelected = false;
+    
+      // Reset strand back to original
+      inputStrand = originalStrand;
+      processSequence();  // Re-process to regenerate RNA & protein outputs
     }
   }
 }
+
+
 
 void keyPressed() {
   // Mutation Screen Input
@@ -174,7 +218,7 @@ void keyPressed() {
       }
     }
 
-    // Typing into New Value Box
+    // Typing into new Value Box
     if (valueBoxSelected) {
       if (keyCode == BACKSPACE && mutationValue.length() > 0) {
         mutationValue = mutationValue.substring(0, mutationValue.length() - 1);
@@ -187,10 +231,10 @@ void keyPressed() {
       }
     }
 
-    return; // Stop further processing while on mutation page
+    return; 
   }
 
-  // Input Screen Typing
+  // Input Screen typing
   if (!hasChosenStrandType || !inputBoxSelected) return;
   if (key == CODED) return;
 
@@ -207,11 +251,14 @@ void keyPressed() {
     if ((isDNASelected && "ATGC".indexOf(base) >= 0) ||
         (isRNASelected && "AUGC".indexOf(base) >= 0)) {
       inputStrand = groupBases(inputStrand.replace(" ", "") + base);
-    } else if (isProteinSelected) {
-      inputStrand += key;
+    } else if (isProteinSelected && Character.isLetter(key)) {
+        String raw = inputStrand.replace(" ", "") + key;
+        inputStrand = groupAminoAcids(raw);
     }
+
   }
 }
+
 
 
 void drawMutationScreen() {
@@ -250,12 +297,12 @@ void drawMutationScreen() {
     text(mutationValue + (valueBoxSelected && showCursor ? "|" : ""), 285, 115);
   }
 
-  // Apply / Back buttons
+  // Apply + Back buttons
   textAlign(LEFT, BASELINE);
   drawButton(20, 150, 120, 30, "Apply", isMouseOver(20, 150, 120, 30));
   drawButton(160, 150, 120, 30, "← Back", isMouseOver(160, 150, 120, 30));
 
-  // Sequence comparison view
+  // Sequence comparison
   if (!originalStrand.equals("")) {
     textSize(14);
     fill(0);
@@ -285,38 +332,44 @@ void drawMutationScreen() {
     }
   }
 
-  // Protein output comparison
-  if (!oldProteinOutput.equals("") && !isProteinSelected) {
+  // Protein comparison using 2D array
+  if (
+    proteinComparison != null &&
+    proteinComparison.length == 2 &&
+    proteinComparison[0] != null &&
+    proteinComparison[1] != null &&
+    !isProteinSelected
+  ) {
     textSize(14);
     fill(0);
     text("Protein Sequence Before:", 95, 335);
     text("Protein Sequence After:", 90, 395);
 
-    String[] oldAAs = oldProteinOutput.split(" ");
-    String[] newAAs = proteinOutput.split(" ");
-
-    for (int i = 0; i < max(oldAAs.length, newAAs.length); i++) {
+    int maxLen = max(proteinComparison[0].length, proteinComparison[1].length);
+    for (int i = 0; i < maxLen; i++) {
       int x = 30 + (i % 18) * 42;
       int y1 = 360 + (i / 18) * 20;
       int y2 = 420 + (i / 18) * 20;
 
       // BEFORE
-      if (i < oldAAs.length) {
+      if (i < proteinComparison[0].length) {
         fill(0);
-        text(oldAAs[i], x, y1);
+        text(proteinComparison[0][i], x, y1);
       }
 
       // AFTER (highlight if different)
-      if (i < newAAs.length) {
-        fill((i >= oldAAs.length || !newAAs[i].equals(oldAAs[i])) ? color(255, 0, 0) : 0);
-        text(newAAs[i], x, y2);
+      if (i < proteinComparison[1].length) {
+        boolean changed = (i >= proteinComparison[0].length || !proteinComparison[1][i].equals(proteinComparison[0][i]));
+        fill(changed ? color(255, 0, 0) : 0);
+        text(proteinComparison[1][i], x, y2);
       }
     }
   }
 }
 
 
-void processSequence() {
+
+void processSequence() { 
   if (isDNASelected) {
     dnaSeq = new DNASequence(inputStrand.replace(" ", "").toUpperCase());
     rnaSeq = new RNASequence(dnaSeq.transcribe());
@@ -330,44 +383,72 @@ void processSequence() {
     protein = new Protein(inputStrand.trim());
   }
 
+
+  if (originalStrand.equals("")) {
+    originalStrand = inputStrand;
+  }
+
   proteinOutput = protein.getSequence();
   features = protein.analyzeFeatures();
 }
 
+
+
 void applyMutation() {
-  originalStrand = inputStrand;
-  oldProteinOutput = proteinOutput;
-
-  if (isProteinSelected) return;  // Don't allow mutations on protein sequences
-
-  // Make sure position is not blank and a valid number
+  if (isProteinSelected) return;
   if (mutationPositionInput.equals("")) return;
 
-  int pos;
   try {
-    pos = Integer.parseInt(mutationPositionInput) - 1; // Convert to 0-based
-    if (pos < 0) return; // Don't allow 0 or negatives
-  } catch (NumberFormatException e) {
-    println("Invalid position input.");
-    return;
-  }
+    int pos = Integer.parseInt(mutationPositionInput) - 1;
+    if (pos < 0) return;
 
-  try {
-    String raw = inputStrand.replace(" ", "");
+    String raw = originalStrand.replace(" ", "");
+    int rawLength = raw.length();
+
+    if ((mutationType.equals("Point") || mutationType.equals("Deletion")) && pos >= rawLength) {
+      println("Mutation position too large.");
+      return;
+    }
+    if (mutationType.equals("Insertion") && pos > rawLength) {
+      println("Insertion position out of bounds.");
+      return;
+    }
+
+    // for safety: make sure proteinOutput exists first bc i dealt with too way many nullpointer exceptions
+    if (proteinOutput == null || proteinOutput.trim().equals("")) {
+      println("Protein output not available — cannot apply mutation.");
+      return;
+    }
+
+    // store pre-mutation version
+    String before = proteinOutput.trim();
+
+    // Apply mutation to original
     StringBuilder sb = new StringBuilder(raw);
 
-    if (mutationType.equals("Point") && pos < sb.length()) {
+    if (mutationType.equals("Point")) {
       sb.setCharAt(pos, mutationValue.charAt(0));
-    } else if (mutationType.equals("Deletion") && pos < sb.length()) {
+    } else if (mutationType.equals("Deletion")) {
       sb.deleteCharAt(pos);
-    } else if (mutationType.equals("Insertion") && pos <= sb.length()) {
+    } else if (mutationType.equals("Insertion")) {
       sb.insert(pos, mutationValue);
     }
 
     inputStrand = groupBases(sb.toString());
-    processSequence();
+    processSequence();  // sets proteinOutput again
 
+    // Only assigns to 2D array if both are safe
+    if (proteinOutput != null && !proteinOutput.trim().equals("")) {
+      proteinComparison = new String[2][];
+      proteinComparison[0] = before.split(" ");
+      proteinComparison[1] = proteinOutput.trim().split(" ");
+    } else {
+      println("New protein output invalid — skipping comparison array.");
+    }
+
+  } catch (NumberFormatException e) {
+    println("Position input is not a valid number.");
   } catch (Exception e) {
-    println("Error applying mutation: " + e.getMessage());
+    println("Unexpected mutation error: " + e.getMessage());
   }
 }
