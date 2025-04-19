@@ -1,5 +1,9 @@
 // Globals & utilities
 
+// -------------------GLOBALS----------------------
+
+String[][] proteinComparison = new String[2][];
+
 DNASequence dnaSeq;
 RNASequence rnaSeq;
 Protein protein;
@@ -35,7 +39,7 @@ String mutationValue = "";
 String[] mutationOptions = {"Point", "Deletion", "Insertion"};
 int selectedMutationIndex = 0;
 
-// UTILITIES
+// -----------------UTILITIES--------------------
 
 boolean isMouseOver(int x, int y, int w, int h) {
   return mouseX >= x && mouseX <= x + w &&
@@ -48,7 +52,7 @@ void drawButton(int x, int y, int w, int h, String label, boolean hovered) {
   rect(x, y, w, h, 10);
 
   fill(0);
-  textSize(18);  // ← Make this larger (adjust if needed)
+  textSize(18);  
   textAlign(CENTER, CENTER);
   text(label, x + w / 2, y + h / 2);
 }
@@ -62,6 +66,16 @@ String groupBases(String s) {
   }
   return sb.toString();
 }
+
+String groupAminoAcids(String s) {
+  StringBuilder sb = new StringBuilder();
+  for (int i = 0; i < s.length(); i++) {
+    sb.append(s.charAt(i));
+    if ((i + 1) % 3 == 0 && i != s.length() - 1) sb.append(" ");
+  }
+  return sb.toString();
+}
+
 
 String wrapText(String input, int lineLength) {
   StringBuilder wrapped = new StringBuilder();
